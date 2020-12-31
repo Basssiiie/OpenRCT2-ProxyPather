@@ -2,7 +2,7 @@
 
 This plugin lets you quickly cover guide paths with full paths without changing the guests pathfinding. This method is called 'proxy pathing'.
 
-![(Video example of applying proxy pathing)](img/proxy-pather.png)
+![(Video example of applying proxy pathing)](img/proxy-pather.gif)
 
 In short; to make it look like your guests are using the full width of the path, you can create so called 'guide paths'. These paths will guide the guests along your preferred routes without having the game turn it into wide paths (which are mostly ignored by guests).
 
