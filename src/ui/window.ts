@@ -16,7 +16,7 @@ const widgetLineHeight = 14;
 class ProxyPatherWindow
 {
 	private _tool = new MapSelectionTool("proxy-pather", "path_down");
-	private _enabled = true;
+	private _enabled = false;
 
 
 	/**
