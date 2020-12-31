@@ -43,7 +43,7 @@ This project supports the [OpenRCT2 hot reload feature](https://github.com/OpenR
 
 1. Make sure you've enabled it by setting `enable_hot_reloading = true` in your `/OpenRCT2/config.ini`.
 2. Open `rollup.config.dev.js` and change the output file path to your plugin folder. 
-    - Example: `C:/Users/<YOUR NAME>/Documents/OpenRCT2/plugin/RideVehicleEditor.js`.
+    - Example: `C:/Users/<YOUR NAME>/Documents/OpenRCT2/plugin/ProxyPather.js`.
     - Make sure this path uses `/` instead of `\` slashes!
 3. Open command prompt and use `cd` to change your current directory to the root folder of this project.
 4. Run `npm start` to start the hot reload server.
