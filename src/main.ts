@@ -16,7 +16,7 @@ function main()
 		return;
 	}
 
-	ui.registerMenuItem("Proxy pather", () => window.open());	
+	ui.registerMenuItem("Proxy Pather", () => window.open());	
 };
 
 export default main;

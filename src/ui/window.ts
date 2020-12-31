@@ -80,7 +80,7 @@ class ProxyPatherWindow
 			});
 		}
 
-		this.toggle();
+		this.active(true);
 	}
 
 
@@ -99,6 +99,18 @@ class ProxyPatherWindow
 	 */
 	private toggle()
 	{
+		this.active(!this._enabled);
+	}
+
+
+	/**
+	 * Turns the tool on or off.
+	 *
+	 * @param value True to enable to tool, false to disable it.
+	 */
+	private active(value: boolean)
+	{
+		this._enabled = value;
 
 		const window = ui.getWindow(windowId);
 		if (!window)
@@ -106,12 +118,10 @@ class ProxyPatherWindow
 			return;
 		}
 
-		this._enabled = !this._enabled;
-
 		const button = window.findWidget<ButtonWidget>(buttonId);
-		button.isPressed = this._enabled;
+		button.isPressed = value;
 
-		if (this._enabled)
+		if (value)
 		{
 			button.text = "Activated";
 			this._tool.activate();
