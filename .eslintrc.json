@@ -1,0 +1,30 @@
+{
+	"env": {
+		"browser": true,
+		"es6": true,
+		"node": true
+	},
+	"extends": [
+	],
+	"globals": {
+		"Atomics": "readonly",
+		"SharedArrayBuffer": "readonly"
+	},
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"ecmaVersion": 11,
+		"sourceType": "module"
+	},
+	"plugins": [
+		"@typescript-eslint"
+	],
+	"rules": {
+		"no-undef": 0,
+		"spaced-comment": 0
+	},
+	"settings": {
+		"import/resolver": {
+			"node": { "extensions": [ ".js", ".ts" ] }
+		}
+	}
+}
