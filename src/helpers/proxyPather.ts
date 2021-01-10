@@ -1,19 +1,6 @@
 import { findSingleIndex } from "./utilityHelpers";
 
 
-declare global
-{
-	// Add the hidden object field to this interface.
-	interface FootpathElement
-	{
-		/**
-		 * Specifies the loaded data object for this path.
-		 */
-		object: number;
-	}
-}
-
-
 /**
  * Tries to insert a proxy path into the specified tile. The proxy path
  * will hide the current path and add the fake path on top of it.
@@ -39,7 +26,8 @@ export function tryInsertProxyPath(tile: Tile)
 	const proxyPath = tile.insertElement(index + 2) as FootpathElement;
 	proxyPath.type = "footpath";
 	proxyPath.object = pathType;
-	proxyPath.edgesAndCorners = 0xFF; // set all corners and edges
+	proxyPath.edges = 0xFF;
+	proxyPath.corners = 0xFF; 
 	proxyPath.baseHeight = baseHeight;
 	proxyPath.clearanceHeight = clearance;
 }
