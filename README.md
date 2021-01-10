@@ -17,7 +17,9 @@ Thanks to Darkoro and Manticore from the DKMP server for explaining proxy pathin
 
 2. Download the latest version of the plugin from the [Releases page](https://github.com/Basssiiie/OpenRCT2-ProxyPather/releases).
 3. To install it, put the downloaded `*.js` file into your `/OpenRCT2/plugin` folder. 
-    - This folder is commonly found in `C:/Users/<YOUR NAME>/Documents/OpenRCT2/plugin`. 
+    - Easiest way to find the OpenRCT2-folder is by launching the OpenRCT2 game, click and hold on the red toolbox in the main menu, and select "Open custom content folder".
+    - Otherwise this folder is commonly found in `C:/Users/<YOUR NAME>/Documents/OpenRCT2/plugin` on Windows.
+    - If you already had this plugin installed before, you can safely overwrite the old file.
 4. Once the file is there, it should show up ingame in the dropdown menu under the map icon.
 
 ---
@@ -43,7 +45,7 @@ This project supports the [OpenRCT2 hot reload feature](https://github.com/OpenR
 
 1. Make sure you've enabled it by setting `enable_hot_reloading = true` in your `/OpenRCT2/config.ini`.
 2. Open `rollup.config.dev.js` and change the output file path to your plugin folder. 
-    - Example: `C:/Users/<YOUR NAME>/Documents/OpenRCT2/plugin/RideVehicleEditor.js`.
+    - Example: `C:/Users/<YOUR NAME>/Documents/OpenRCT2/plugin/ProxyPather.js`.
     - Make sure this path uses `/` instead of `\` slashes!
 3. Open command prompt and use `cd` to change your current directory to the root folder of this project.
 4. Run `npm start` to start the hot reload server.
