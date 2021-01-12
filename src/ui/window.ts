@@ -1,13 +1,19 @@
-import { tryInsertProxyPath } from "../helpers/proxyPather";
-import { isDebugMode, log } from "../helpers/utilityHelpers";
+import { proxifyPaths } from "../helpers/proxyPather";
+import { SelectedPaths } from "../helpers/selectedPaths";
+import { error, isDebugMode, log } from "../helpers/utilityHelpers";
 import MapSelectionTool from "../tools/mapSelectionTool";
 import pluginVersion from "../version";
 
 
 // Settings for the window
 const windowId = "proxy-pather-window";
-const buttonId = "proxy-pather-button";
+const checkboxSmoothId = 'proxy-pather-smooth-edges';
+const buttonAddId = "proxy-pather-add-button";
+const buttonRemoveId = "proxy-pather-remove-button";
 const widgetLineHeight = 14;
+
+
+type ToolMode = "off" | "add" | "remove";
 
 
 /**
@@ -16,7 +22,7 @@ const widgetLineHeight = 14;
 class ProxyPatherWindow
 {
 	private _tool = new MapSelectionTool("proxy-pather", "path_down");
-	private _enabled = false;
+	private _toolMode: ToolMode = "off";
 
 
 	/**
@@ -26,8 +32,15 @@ class ProxyPatherWindow
 	{
 		this._tool.onSelect = s =>
 		{
-			s.forEach(t => tryInsertProxyPath(t));
-			log("Proxy pathing applied.");
+			const range = s.toMapRange();
+			if (range)
+			{
+				const paths = new SelectedPaths(range);
+				const smoothEdges = this.getSmoothEdgesSetting();
+
+				proxifyPaths(paths, smoothEdges);
+				log("Proxy pathing applied.");
+			}
 		};
 	}
 
@@ -54,23 +67,43 @@ class ProxyPatherWindow
 			ui.openWindow({
 				classification: windowId,
 				title: windowTitle,
-				height: 85,
 				width: 260,
+				height: 90,
 				onClose: () => this.deactivate(),
 				widgets: [
 					<ButtonWidget>{
-						name: buttonId,
-						type: 'button' as WidgetType,
-						x: 60,
-						y: 23,
-						width: 140,
-						height: 35,
-						onClick: () => this.toggle()
+						name: buttonAddId,
+						type: 'button',
+						x: 30,
+						y: 37,
+						width: 100,
+						height: 30,
+						text: "Proxify",
+						onClick: () => this.toggle("add")
+					},
+					<ButtonWidget>{
+						name: buttonRemoveId,
+						type: 'button',
+						x: 135,
+						y: 37,
+						width: 100,
+						height: 30,
+						text: "Remove",
+						onClick: () => this.toggle("remove")
+					},
+					<CheckboxWidget>{
+						name: checkboxSmoothId,
+						type: 'checkbox',
+						x: 35,
+						y: 20,
+						width: 100,
+						height: widgetLineHeight,
+						text: "Smooth edges",
 					},
 					<LabelWidget>{
-						type: 'label' as WidgetType,
+						type: 'label',
 						x: 6,
-						y: 65,
+						y: 72,
 						width: 275,
 						height: widgetLineHeight,
 						text: "github.com/Basssiiie/OpenRCT2-ProxyPather",
@@ -80,7 +113,7 @@ class ProxyPatherWindow
 			});
 		}
 
-		this.active(true);
+		this.setTool("add");
 	}
 
 
@@ -95,11 +128,11 @@ class ProxyPatherWindow
 
 
 	/**
-	 * Toggles the tool on or off based on the internal state.
+	 * Toggles the specified tool mode on or off based on the internal state.
 	 */
-	private toggle()
+	private toggle(mode: ToolMode)
 	{
-		this.active(!this._enabled);
+		this.setTool((this._toolMode != mode) ? mode : "off");
 	}
 
 
@@ -108,9 +141,9 @@ class ProxyPatherWindow
 	 *
 	 * @param value True to enable to tool, false to disable it.
 	 */
-	private active(value: boolean)
+	private setTool(mode: ToolMode)
 	{
-		this._enabled = value;
+		this._toolMode = mode;
 
 		const window = ui.getWindow(windowId);
 		if (!window)
@@ -118,18 +151,18 @@ class ProxyPatherWindow
 			return;
 		}
 
-		const button = window.findWidget<ButtonWidget>(buttonId);
-		button.isPressed = value;
+		const buttonAdd = window.findWidget<ButtonWidget>(buttonAddId);
+		const buttonRemove = window.findWidget<ButtonWidget>(buttonRemoveId);
+		buttonAdd.isPressed = (mode === "add");
+		buttonRemove.isPressed = (mode === "remove");
 
-		if (value)
+		if (mode === "off")
 		{
-			button.text = "Activated";
-			this._tool.activate();
+			this._tool.deactivate();
 		}
 		else
 		{
-			button.text = "Deactivated";
-			this._tool.deactivate();
+			this._tool.activate();
 		}
 	}
 
@@ -140,6 +173,24 @@ class ProxyPatherWindow
 	private deactivate()
 	{
 		this._tool.deactivate();
+	}
+
+
+	/**
+	 * Gets the currently selected setting for smooth path edges.
+	 */
+	private getSmoothEdgesSetting(): boolean
+	{
+		const window = ui.getWindow(windowId);
+		const checkbox = window?.findWidget<CheckboxWidget>(checkboxSmoothId);
+
+		if (!window || !checkboxSmoothId)
+		{
+			error("Could not find smooth edges checkbox!");
+			return false;
+		}
+
+		return checkbox.isChecked;
 	}
 }
 
