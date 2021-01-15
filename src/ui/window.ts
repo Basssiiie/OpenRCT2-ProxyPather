@@ -1,4 +1,5 @@
-import { proxifyPaths } from "../helpers/proxyPather";
+import MapSelection from "../helpers/mapSelection";
+import { proxifyPaths, removeProxiedPaths } from "../helpers/proxyPather";
 import { SelectedPaths } from "../helpers/selectedPaths";
 import { error, isDebugMode, log } from "../helpers/utilityHelpers";
 import MapSelectionTool from "../tools/mapSelectionTool";
@@ -30,18 +31,7 @@ class ProxyPatherWindow
 	 */
 	constructor()
 	{
-		this._tool.onSelect = s =>
-		{
-			const range = s.toMapRange();
-			if (range)
-			{
-				const paths = new SelectedPaths(range);
-				const smoothEdges = this.getSmoothEdgesSetting();
-
-				proxifyPaths(paths, smoothEdges);
-				log("Proxy pathing applied.");
-			}
-		};
+		this._tool.onSelect = s => this.onUseTool(s);
 	}
 
 
@@ -102,7 +92,7 @@ class ProxyPatherWindow
 					},
 					<LabelWidget>{
 						type: 'label',
-						x: 6,
+						x: 7,
 						y: 72,
 						width: 275,
 						height: widgetLineHeight,
@@ -163,6 +153,36 @@ class ProxyPatherWindow
 		else
 		{
 			this._tool.activate();
+		}
+	}
+
+
+	/**
+	 * Callback for when the tool gets used.
+	 * 
+	 * @param selection The map area selected by the tool.
+	 */
+	private onUseTool(selection: MapSelection)
+	{
+		const range = selection.toMapRange();
+		if (range)
+		{
+			switch (this._toolMode)
+			{
+				case "add":
+					const smoothEdges = this.getSmoothEdgesSetting();
+					const selectionPadding = (smoothEdges) ? 1 : 0;
+					const pathsToProxy = new SelectedPaths(range, selectionPadding);
+	
+					proxifyPaths(pathsToProxy, smoothEdges);
+					break;
+				
+				case "remove":
+					const pathsToDeproxy = new SelectedPaths(range);
+
+					removeProxiedPaths(pathsToDeproxy);
+					break;						
+			}
 		}
 	}
 

@@ -1,51 +1,121 @@
 import { Path, SelectedPaths, TilePaths } from "./selectedPaths";
+import { log } from "./utilityHelpers";
 
 
 /**
- * Tries to insert a proxy path into the specified tile. The proxy path
- * will hide the current path and add the fake path on top of it.
+ * Tries to insert proxy paths onto all paths on the selected tiles. The proxy path will 
+ * hide the current path and add the fake path on top of it.
  * 
- * @param tile The tile to add the proxy path to.
+ * @param selection A map of selected paths in an area.
+ * @param smoothEdges Whether to make the path edges smooth depending on neighbouring tiles.
  */
 export function proxifyPaths(selection: SelectedPaths, smoothEdges: boolean)
 {
+	let count = 0;
 	selection.forEach((x, y, tiles) =>
 	{
 		const tile = tiles[x][y];
 
+		// Go through all paths on this tile from top to bottom to prevent element re-order.
 		for (let i = tile.paths.length - 1; i >= 0; i--)
 		{
 			const pathInfo = tile.paths[i];
+			let proxyPath;
 
-			if (isProxied(pathInfo))
-				continue;
-
-			// Copy/paste the same path on top of it.
-			const proxyPath = tile.data.insertElement(pathInfo.startIndex + 1) as FootpathElement;
-			const height = pathInfo.baseHeight;
-
-			proxyPath.type = "footpath";
-			proxyPath.baseHeight = height;
-			proxyPath.clearanceHeight = pathInfo.clearanceHeight;
-			proxyPath.object = pathInfo.object;
-
-			if (smoothEdges)
+			if (!isProxied(pathInfo))
 			{
-				const sides = getPathSides(x, y, height, tiles);
-				proxyPath.edges = sides;
-				proxyPath.corners = sides >> 4;
+				// Skip paths with slopes; we do not proxy them.
+				if (pathInfo.isSloped)
+					continue;
+
+				// Copy/paste the same path on top of it.
+				proxyPath = addProxyPath(tile.data, pathInfo);
 			}
 			else
 			{
+				// Get the top path to update the edges only.
+				const last = (pathInfo.startIndex + pathInfo.layerCount) - 1;
+				proxyPath = tile.data.getElement<FootpathElement>(last);
+			}
+
+			if (smoothEdges) 
+			{
+				const sides = getPathSides(x, y, pathInfo.baseHeight, tiles);
+				proxyPath.edges = sides;
+				proxyPath.corners = sides >> 4;
+			}	
+			else 
+			{
 				proxyPath.edges = 0xFF;
-				proxyPath.corners = 0xFF; 
+				proxyPath.corners = 0xFF;
 			}
 			
 			// Hide the original path.
 			const originalPath = tile.data.getElement<FootpathElement>(pathInfo.startIndex);
 			originalPath.isHidden = true;
+			count++;
 		}
-	})
+	});
+	
+	log(`Proxy pathing applied to ${count} path elements.`);
+}
+
+
+/**
+ * Removes all extra proxy layers that are present within the current selected area.
+ * 
+ * @param selection A map of selected paths in an area.
+ */
+export function removeProxiedPaths(selection: SelectedPaths)
+{
+	let count = 0;
+	selection.forEach((x, y, tiles) =>
+	{
+		const tile = tiles[x][y];
+
+		// Go through all paths on this tile from top to bottom to prevent element re-order.
+		for (let i = tile.paths.length - 1; i >= 0; i--)
+		{
+			const pathInfo = tile.paths[i];
+
+			if (!isProxied(pathInfo))
+				continue;
+
+			// Remove all proxy-layers from top to bottom to prevent element re-order.
+			const firstProxy = (pathInfo.startIndex + 1);
+			const lastProxy = (pathInfo.startIndex + pathInfo.layerCount) - 1;
+
+			for (let j = lastProxy; j >= firstProxy; j--)
+			{
+				tile.data.removeElement(j);
+			}
+
+			// Hide the original path.
+			const originalPath = tile.data.getElement<FootpathElement>(pathInfo.startIndex);
+			originalPath.isHidden = false;
+			count++;
+		}
+	});
+	
+	log(`Proxy pathing removed from ${count} path elements.`);
+}
+
+
+/**
+ * Add a proxy path to the specified tile.
+ * 
+ * @param tile The tile to add the proxy path to.
+ * @param path The path to proxify.
+ */
+function addProxyPath(tile: Tile, path: Path) 
+{
+	const proxyPath = tile.insertElement(path.startIndex + 1) as FootpathElement;
+
+	proxyPath.type = "footpath";
+	proxyPath.baseHeight = path.baseHeight;
+	proxyPath.clearanceHeight = path.clearanceHeight;
+	proxyPath.object = path.object;
+	return proxyPath;
 }
 
 

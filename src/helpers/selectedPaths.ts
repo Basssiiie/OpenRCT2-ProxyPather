@@ -1,7 +1,6 @@
 import { log, mapTileSize } from "./utilityHelpers";
 
 
-
 /**
  * Specifies all paths on the specified tile.
  */
@@ -21,6 +20,7 @@ export interface Path
 	layerCount: number;
 
 	object: number;
+	isSloped: boolean;
 	baseHeight: number;
 	clearanceHeight: number;
 	isHidden: boolean;
@@ -32,12 +32,24 @@ export interface Path
  */
 export class SelectedPaths
 {
+	/**
+	 * Gets the selected tile information on the map.
+	 */
 	tiles: TilePaths[][];
 
+
+	/**
+	 * Gets the amount of tiles selected on the X axis.
+	 */
 	get width()
 	{
 		return this.tiles.length;
 	}	
+
+	
+	/**
+	 * Gets the amount of tiles selected on the Y axis.
+	 */
 	get height()
 	{
 		return (this.tiles.length > 0) ? this.tiles[0].length : 0;
@@ -50,7 +62,7 @@ export class SelectedPaths
 	 * @param range The map range to get the paths from.
 	 * @param padding Amount of tiles around the specified range to select as well.
 	 */
-	constructor(range: MapRange, readonly padding: number = 1)
+	constructor(range: MapRange, readonly padding: number = 0)
 	{
 		this.tiles = [];
 
@@ -84,12 +96,12 @@ export class SelectedPaths
 	 */
 	forEach(callback:(x: number, y: number, tiles: TilePaths[][]) => void)
 	{
-		const width = (this.width - (this.padding * 2));
-		const height = (this.height - (this.padding * 2));
+		const width = (this.width - this.padding);
+		const height = (this.height - this.padding);
 
-		for (let x = this.padding; x <= width; x++)
+		for (let x = this.padding; x < width; x++)
 		{
-			for (let y = this.padding; y <= height; y++)
+			for (let y = this.padding; y < height; y++)
 			{
 				callback(x, y, this.tiles);
 			}
@@ -125,20 +137,30 @@ export class SelectedPaths
 			{
 				const layer = elements[i];
 				
-				if (layer.type != "footpath" || layer.baseHeight != height)
+				if (layer.type != "footpath")
 					break;
 
+				// If new path on a different height, re-check it later in the outer loop.
+				if (layer.baseHeight != height)
+				{
+					i--;
+					break;
+				}
 				pathLayers++;
 			}
+
+			// Create a layered path object.
+			const realPath = element as FootpathElement;
 
 			paths.push({ 
 				startIndex: start, 
 				layerCount: pathLayers,
 
 				baseHeight: height,
-				clearanceHeight: element.clearanceHeight,
-				isHidden: element.isHidden,
-				object: (element as FootpathElement).object,
+				clearanceHeight: realPath.clearanceHeight,
+				isSloped: (realPath.slopeDirection !== null),
+				isHidden: realPath.isHidden,
+				object: realPath.object,
 			});
 		}
 		return paths;
