@@ -16,6 +16,9 @@ const widgetLineHeight = 14;
 
 type ToolMode = "off" | "add" | "remove";
 
+// Remember the selected option after closing and reopening the window.
+let smoothEdgesOption: boolean = false;
+
 
 /**
  * Controls the proxy pather window.
@@ -89,6 +92,7 @@ class ProxyPatherWindow
 						width: 100,
 						height: widgetLineHeight,
 						text: "Smooth edges",
+						isChecked: smoothEdgesOption
 					},
 					<LabelWidget>{
 						type: 'label',
@@ -112,8 +116,8 @@ class ProxyPatherWindow
 	 */
 	close()
 	{
-		ui.closeWindows(windowId);
 		this.deactivate();
+		ui.closeWindows(windowId);
 	}
 
 
@@ -192,6 +196,8 @@ class ProxyPatherWindow
 	 */
 	private deactivate()
 	{
+		smoothEdgesOption = this.getSmoothEdgesSetting();
+
 		this._tool.deactivate();
 	}
 
