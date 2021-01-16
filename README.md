@@ -28,8 +28,8 @@ Thanks to Darkoro and Manticore from the DKMP server for explaining proxy pathin
 
 This project is based on [wisnia74's Typescript modding template](https://github.com/wisnia74/openrct2-typescript-mod-template) and uses [Nodemon](https://nodemon.io/), [ESLint](https://eslint.org/) and [TypeScript](https://www.typescriptlang.org/) from this template.
 
-1. Install latest versions of [Node](https://nodejs.org/en/) and make sure to include NPM in the installation options.
-2. Clone the project to anywhere pn your PC.
+1. Install latest version of [Node](https://nodejs.org/en/) and make sure to include NPM in the installation options.
+2. Clone the project to a location of your choice on your PC.
 3. Open command prompt, use `cd` to change your current directory to the root folder of this project and run `npm install`.
 4. Find `openrct2.d.ts` TypeScript API declaration file in OpenRCT2 files and copy it to `lib` folder (this file can usually be found in `C:/Users/<YOUR NAME>/Documents/OpenRCT2/bin/` or `C:/Program Files/OpenRCT2/`).
     - Alternatively, you can make a symbolic link instead of copying the file, which will keep the file up to date whenever you install new versions of OpenRCT2.
