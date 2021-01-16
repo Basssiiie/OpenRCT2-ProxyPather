@@ -12,6 +12,13 @@ class MapSelectionTool
 	 */
 	onSelect?: (selection: MapSelection) => void;
 
+	
+	/**
+	 * Event that triggers when the tool is canceled via the 'escape' key or 
+	 * when another tool is activated.
+	 */
+	onCancel?: () => void;
+
 
 	private isDragging = false;
 	private selection: (MapSelection | null) = null;
@@ -33,6 +40,14 @@ class MapSelectionTool
 	 */
 	activate()
 	{
+		const tool = ui.tool;
+
+		if (tool && tool.id === this.name)
+		{
+			log(`Tool: already active.`);
+			return;
+		}
+
 		toggleGridOverlay(true);
 
 		ui.activateTool({
@@ -42,7 +57,7 @@ class MapSelectionTool
 			onDown: a => this.down(a),
 			onUp: a => this.up(a),
 			onMove: a => this.move(a),
-			onFinish: () => this.deactivate()
+			onFinish: () => this.finish()
 		});
 
 		log(`Tool: activated.`);
@@ -55,18 +70,29 @@ class MapSelectionTool
 	deactivate()
 	{
 		const tool = ui.tool;
-		if (tool)
+		if (tool && tool.id === this.name)
 		{
-			if (tool.id != this.name)
-			{
-				log(`Tool: already deactivated.`);
-				return;
-			}
-
-			toggleGridOverlay(false);
 			tool.cancel();
 			log(`Tool: deactivated.`);
 		}
+		else
+		{
+			log(`Tool: already deactivated.`);
+		}
+	}
+
+	
+	/**
+	 * Callback for when the tool is finished.
+	 */
+	private finish()
+	{
+		toggleGridOverlay(false);
+
+		if (this.onCancel)
+		{
+			this.onCancel();
+		}		
 	}
 
 

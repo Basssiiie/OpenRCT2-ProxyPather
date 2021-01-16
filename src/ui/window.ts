@@ -35,6 +35,7 @@ class ProxyPatherWindow
 	constructor()
 	{
 		this._tool.onSelect = s => this.onUseTool(s);
+		this._tool.onCancel = () => this.setTool("off");
 	}
 
 
@@ -149,6 +150,8 @@ class ProxyPatherWindow
 		const buttonRemove = window.findWidget<ButtonWidget>(buttonRemoveId);
 		buttonAdd.isPressed = (mode === "add");
 		buttonRemove.isPressed = (mode === "remove");
+
+		log(`Set tool mode to: '${mode}'`);
 
 		if (mode === "off")
 		{
