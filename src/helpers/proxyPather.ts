@@ -1,4 +1,4 @@
-import { Path, SelectedPaths, TilePaths } from "./selectedPaths";
+import { SelectedPaths, Path, Slope, TilePaths } from "./selectedPaths";
 import { log } from "./utilityHelpers";
 
 
@@ -25,7 +25,7 @@ export function proxifyPaths(selection: SelectedPaths, smoothEdges: boolean)
 			if (!isProxied(pathInfo))
 			{
 				// Skip paths with slopes; we do not proxy them.
-				if (pathInfo.isSloped)
+				if (pathInfo.slopeDirection !== Slope.Flat)
 					continue;
 
 				// Copy/paste the same path on top of it.
@@ -143,13 +143,13 @@ function getPathSides(x: number, y: number, z: number, tiles:TilePaths[][]): num
 {
 	let sides: number = 0;
 
-	if (hasPathAtHeight(tiles[x - 1][y], z)) 
+	if (hasPathAtHeight(tiles[x - 1][y], z, Slope.NorthEast)) 
 		sides |= Edge.NorthEast;
-	if (hasPathAtHeight(tiles[x][y + 1], z)) 
+	if (hasPathAtHeight(tiles[x][y + 1], z, Slope.SouthEast)) 
 		sides |= Edge.SouthEast;
-	if (hasPathAtHeight(tiles[x + 1][y], z)) 
+	if (hasPathAtHeight(tiles[x + 1][y], z, Slope.SouthWest)) 
 		sides |= Edge.SouthWest;
-	if (hasPathAtHeight(tiles[x][y - 1], z)) 
+	if (hasPathAtHeight(tiles[x][y - 1], z, Slope.NorthWest)) 
 		sides |= Edge.NorthWest;
 
 	if ((sides & Edge.North) === Edge.North && hasPathAtHeight(tiles[x - 1][y - 1], z)) 
@@ -171,12 +171,22 @@ function getPathSides(x: number, y: number, z: number, tiles:TilePaths[][]): num
  * 
  * @param tile The tile to search for path elements.
  * @param height The height at which the path needs to be.
+ * @param slope The allowed direction of the slope, if it is sloped.
  */
-function hasPathAtHeight(tile:TilePaths, height: number): boolean
+function hasPathAtHeight(tile:TilePaths, height: number, slope?: Slope): boolean
 {
 	for (let i = 0; i < tile.paths.length; i++)
 	{
-		if (tile.paths[i].baseHeight === height)
+		const path = tile.paths[i];
+
+		if (path.slopeDirection === Slope.Flat || path.slopeDirection === slope)
+		{
+			if (path.baseHeight === height)
+				return true;
+		}
+		else if (slope !== undefined 
+			&& path.slopeDirection === ((slope + 2) % Slope.Count) 
+			&& path.baseHeight === (height - 2))
 			return true;
 	}
 	return false;

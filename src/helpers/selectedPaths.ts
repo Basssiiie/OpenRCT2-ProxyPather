@@ -20,10 +20,24 @@ export interface Path
 	layerCount: number;
 
 	object: number;
-	isSloped: boolean;
+	slopeDirection: Slope;
 	baseHeight: number;
 	clearanceHeight: number;
 	isHidden: boolean;
+}
+
+
+/**
+ * Possible slope directions a path can have.
+ */
+export const enum Slope
+{
+	Flat = -1,
+	NorthEast = 0,
+	SouthEast = 1,
+	SouthWest = 2,
+	NorthWest = 3,
+	Count = 4 // amount of different slopes
 }
 
 
@@ -158,7 +172,7 @@ export class SelectedPaths
 
 				baseHeight: height,
 				clearanceHeight: realPath.clearanceHeight,
-				isSloped: (realPath.slopeDirection !== null),
+				slopeDirection: realPath.slopeDirection ?? Slope.Flat,
 				isHidden: realPath.isHidden,
 				object: realPath.object,
 			});
