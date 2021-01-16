@@ -64,32 +64,3 @@ export function toggleGridOverlay(value: boolean)
 		ui.mainViewport.visibilityFlags &= ~(ViewportFlagGridlines);
 	}
 }
-
-
-/**
- * Finds exactly one matching item in this array, if one is present.
- * Returns -1 if none or more than one are present.
- * 
- * @param array The array to search.
- * @param predicate The predicate to match all items against.
- */
-export function findSingleIndex<T>(array: T[], predicate: (value: T) => boolean): number
-{
-	const length = array.length;
-	let index: number = -1;
-
-	for (let i = 0; i < length; i++)
-	{
-		const current = array[i];
-
-		if (predicate(current))
-		{
-			if (index != -1)
-			{
-				return -1;
-			}
-			index = i;
-		}
-	}
-	return index;
-}
