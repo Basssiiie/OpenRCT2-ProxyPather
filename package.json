@@ -29,7 +29,7 @@
         "nodemon": "^2.0.7",
         "rollup": "^2.46.0",
         "rollup-plugin-terser": "^7.0.2",
-        "tslib": "^2.2.0",
+        "tslib": "^2.3.0",
         "typescript": "^4.2.4"
     },
     "dependencies": {},
