@@ -1,7 +1,7 @@
 /**
  * Returns true if the UI is available, or false if the game is running in headless mode.
  */
-export const isUiAvailable = (typeof ui !== 'undefined');
+export const isUiAvailable = (typeof ui !== "undefined");
 
 
 /**
@@ -18,7 +18,6 @@ export const mapTileSize = 32;
 
 /**
  * Logs a message is debug mode is enabled, or does nothing otherwise.
- *
  * @param message The error message to be logged.
  */
 export function log(message: string): void
@@ -32,7 +31,6 @@ export function log(message: string): void
 
 /**
  * Logs an error message with an optional method name for specifying the origin.
- *
  * @param message The error message to be logged.
  * @param method The method specifying where the error occured.
  */
@@ -50,7 +48,6 @@ const ViewportFlagGridlines = (1 << 7);
 
 /**
  * Toogles the map grid overlay on or off.
- * 
  * @param value True for on, false for off.
  */
 export function toggleGridOverlay(value: boolean)

@@ -1,20 +1,20 @@
 import { log, toggleGridOverlay } from "../helpers/utilityHelpers";
-import MapSelection from "../helpers/mapSelection";
+import { MapSelection } from "../helpers/mapSelection";
 
 
 /**
  * Tool that can select an area.
  */
-class MapSelectionTool
+export class MapSelectionTool
 {
 	/**
 	 * Event that triggers when an area is selected.
 	 */
 	onSelect?: (selection: MapSelection) => void;
 
-	
+
 	/**
-	 * Event that triggers when the tool is canceled via the 'escape' key or 
+	 * Event that triggers when the tool is canceled via the 'escape' key or
 	 * when another tool is activated.
 	 */
 	onCancel?: () => void;
@@ -26,7 +26,6 @@ class MapSelectionTool
 
 	/**
 	 * Tool that allows selecting an area.
-	 * 
 	 * @param name The name of the tool, used as a identifier.
 	 * @param cursor The cursor to use for selection.
 	 */
@@ -81,7 +80,7 @@ class MapSelectionTool
 		}
 	}
 
-	
+
 	/**
 	 * Callback for when the tool is finished.
 	 */
@@ -92,7 +91,7 @@ class MapSelectionTool
 		if (this.onCancel)
 		{
 			this.onCancel();
-		}		
+		}
 	}
 
 
@@ -107,7 +106,7 @@ class MapSelectionTool
 			log(`Tool: down at unknown location.`);
 			return;
 		}
-		
+
 		log(`Tool: down at ${JSON.stringify(location)}.`);
 
 		this.isDragging = true;
@@ -168,5 +167,3 @@ class MapSelectionTool
 		}
 	}
 }
-
-export default MapSelectionTool;

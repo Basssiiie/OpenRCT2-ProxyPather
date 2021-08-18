@@ -4,7 +4,7 @@ import { error } from "./utilityHelpers";
 /**
  * Class to specify an area on the map.
  */
-class MapSelection
+export class MapSelection
 {
 	start?: CoordsXY;
 	end?: CoordsXY;
@@ -33,5 +33,3 @@ class MapSelection
 		}
 	}
 }
-
-export default MapSelection;

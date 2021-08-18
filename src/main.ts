@@ -1,5 +1,5 @@
-import { isUiAvailable, log } from './helpers/utilityHelpers';
-import ProxyPatherWindow from './ui/window';
+import { isUiAvailable, log } from "./helpers/utilityHelpers";
+import { ProxyPatherWindow } from "./ui/window";
 
 
 const window = new ProxyPatherWindow();
@@ -8,15 +8,14 @@ const window = new ProxyPatherWindow();
 /**
  * Entry point of the plugin.
  */
-function main()
+export function main()
 {
 	log("Plugin started.");
 
-	if (!isUiAvailable) {
+	if (!isUiAvailable)
+	{
 		return;
 	}
 
-	ui.registerMenuItem("Proxy Pather", () => window.open());	
+	ui.registerMenuItem("Proxy Pather", () => window.open());
 };
-
-export default main;

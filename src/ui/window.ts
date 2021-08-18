@@ -1,14 +1,14 @@
-import MapSelection from "../helpers/mapSelection";
+import { MapSelection } from "../helpers/mapSelection";
 import { proxifyPaths, removeProxiedPaths } from "../helpers/proxyPather";
 import { SelectedPaths } from "../helpers/selectedPaths";
 import { error, isDebugMode, log } from "../helpers/utilityHelpers";
-import MapSelectionTool from "../tools/mapSelectionTool";
-import pluginVersion from "../version";
+import { MapSelectionTool } from "../tools/mapSelectionTool";
+import { pluginVersion } from "../version";
 
 
 // Settings for the window
 const windowId = "proxy-pather-window";
-const checkboxSmoothId = 'proxy-pather-smooth-edges';
+const checkboxSmoothId = "proxy-pather-smooth-edges";
 const buttonAddId = "proxy-pather-add-button";
 const buttonRemoveId = "proxy-pather-remove-button";
 const widgetLineHeight = 14;
@@ -23,7 +23,7 @@ let smoothEdgesOption: boolean = false;
 /**
  * Controls the proxy pather window.
  */
-class ProxyPatherWindow
+export class ProxyPatherWindow
 {
 	private _tool = new MapSelectionTool("proxy-pather", "path_down");
 	private _toolMode: ToolMode = "off";
@@ -67,7 +67,7 @@ class ProxyPatherWindow
 				widgets: [
 					<ButtonWidget>{
 						name: buttonAddId,
-						type: 'button',
+						type: "button",
 						x: 30,
 						y: 37,
 						width: 100,
@@ -77,7 +77,7 @@ class ProxyPatherWindow
 					},
 					<ButtonWidget>{
 						name: buttonRemoveId,
-						type: 'button',
+						type: "button",
 						x: 135,
 						y: 37,
 						width: 100,
@@ -87,7 +87,7 @@ class ProxyPatherWindow
 					},
 					<CheckboxWidget>{
 						name: checkboxSmoothId,
-						type: 'checkbox',
+						type: "checkbox",
 						x: 35,
 						y: 20,
 						width: 100,
@@ -96,7 +96,7 @@ class ProxyPatherWindow
 						isChecked: smoothEdgesOption
 					},
 					<LabelWidget>{
-						type: 'label',
+						type: "label",
 						x: 7,
 						y: 72,
 						width: 275,
@@ -166,7 +166,7 @@ class ProxyPatherWindow
 
 	/**
 	 * Callback for when the tool gets used.
-	 * 
+	 *
 	 * @param selection The map area selected by the tool.
 	 */
 	private onUseTool(selection: MapSelection)
@@ -180,15 +180,15 @@ class ProxyPatherWindow
 					const smoothEdges = this.getSmoothEdgesSetting();
 					const selectionPadding = (smoothEdges) ? 1 : 0;
 					const pathsToProxy = new SelectedPaths(range, selectionPadding);
-	
+
 					proxifyPaths(pathsToProxy, smoothEdges);
 					break;
-				
+
 				case "remove":
 					const pathsToDeproxy = new SelectedPaths(range);
 
 					removeProxiedPaths(pathsToDeproxy);
-					break;						
+					break;
 			}
 		}
 	}
@@ -219,8 +219,6 @@ class ProxyPatherWindow
 			return false;
 		}
 
-		return checkbox.isChecked;
+		return (checkbox.isChecked === true);
 	}
 }
-
-export default ProxyPatherWindow;

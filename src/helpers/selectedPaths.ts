@@ -6,7 +6,7 @@ import { log, mapTileSize } from "./utilityHelpers";
  */
 export interface TilePaths
 {
-	data: Tile;
+	data: Readonly<Tile>;
 	paths: Path[];
 }
 
@@ -58,9 +58,9 @@ export class SelectedPaths
 	get width()
 	{
 		return this.tiles.length;
-	}	
+	}
 
-	
+
 	/**
 	 * Gets the amount of tiles selected on the Y axis.
 	 */
@@ -72,7 +72,7 @@ export class SelectedPaths
 
 	/**
 	 * Selects all paths in the specified range, with optional padding around it.
-	 * 
+	 *
 	 * @param range The map range to get the paths from.
 	 * @param padding Amount of tiles around the specified range to select as well.
 	 */
@@ -85,7 +85,7 @@ export class SelectedPaths
 		const top = (range.leftTop.y / mapTileSize) - padding;
 		const bottom = (range.rightBottom.y / mapTileSize) + padding;
 
-		log (`Selection = ${JSON.stringify(range)}`);
+		log(`Selection = ${JSON.stringify(range)}`);
 
 		for (let x = left; x <= right; x++)
 		{
@@ -105,7 +105,7 @@ export class SelectedPaths
 
 	/**
 	 * Performs the specified action for each tile in the selection.
-	 * 
+	 *
 	 * @param callback The action to perform on each tile.
 	 */
 	forEach(callback:(x: number, y: number, tiles: TilePaths[][]) => void)
@@ -124,9 +124,9 @@ export class SelectedPaths
 
 
 	/**
-	 * Find all path elements on this tile and group them together if they are simply 
+	 * Find all path elements on this tile and group them together if they are simply
 	 * layers at the same height.
-	 * 
+	 *
 	 * @param tile The tile for which to get all path elements.
 	 */
 	private getPathsOnTile(tile: Tile): Path[]
@@ -150,7 +150,7 @@ export class SelectedPaths
 			for (; ++i < count;)
 			{
 				const layer = elements[i];
-				
+
 				if (layer.type != "footpath")
 					break;
 
@@ -166,8 +166,8 @@ export class SelectedPaths
 			// Create a layered path object.
 			const realPath = element as FootpathElement;
 
-			paths.push({ 
-				startIndex: start, 
+			paths.push({
+				startIndex: start,
 				layerCount: pathLayers,
 
 				baseHeight: height,
