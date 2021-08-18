@@ -1,11 +1,11 @@
-import typescript from '@rollup/plugin-typescript';
-import { terser } from 'rollup-plugin-terser';
+import typescript from "@rollup/plugin-typescript";
+import { terser } from "rollup-plugin-terser";
 
 export default {
-	input: './src/registerPlugin.ts',
+	input: "./src/registerPlugin.ts",
 	output: {
-		file: './dist/ProxyPather.js',
-		format: 'iife',
+		file: "./dist/ProxyPather.js",
+		format: "iife",
 	},
 	plugins: [
 		typescript(),
@@ -13,7 +13,7 @@ export default {
 			format: {
 				quote_style: 1,
 				wrap_iife: true,
-				preamble: '// Get the latest version: https://github.com/Basssiiie/OpenRCT2-ProxyPather',
+				preamble: "// Get the latest version: https://github.com/Basssiiie/OpenRCT2-ProxyPather",
 			},
 		}),
 	],
