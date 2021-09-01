@@ -22,7 +22,7 @@
     "homepage": "https://github.com/Basssiiie/OpenRCT2-ProxyPather#readme",
     "devDependencies": {
         "@rollup/plugin-typescript": "^8.2.5",
-        "@typescript-eslint/eslint-plugin": "^4.29.2",
+        "@typescript-eslint/eslint-plugin": "^4.30.0",
         "@typescript-eslint/parser": "^4.29.2",
         "eslint": "^7.32.0",
         "eslint-plugin-import": "^2.24.0",
