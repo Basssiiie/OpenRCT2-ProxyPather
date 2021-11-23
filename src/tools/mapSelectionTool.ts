@@ -1,5 +1,5 @@
 import { debug } from "../helpers/logger";
-import { MapSelection } from "../helpers/mapSelection";
+import { MapSelection, toMapRange } from "../helpers/mapSelection";
 
 
 /**
@@ -20,8 +20,8 @@ export class MapSelectionTool
 	onCancel?: () => void;
 
 
-	private isDragging = false;
-	private selection: (MapSelection | null) = null;
+	_isDragging = false;
+	_selection: (MapSelection | null) = null;
 
 
 	/**
@@ -53,10 +53,10 @@ export class MapSelectionTool
 			id: this.name,
 			cursor: this.cursor,
 			onStart: () => { },
-			onDown: a => this.down(a),
-			onUp: a => this.up(a),
-			onMove: a => this.move(a),
-			onFinish: () => this.finish()
+			onDown: a => down(this, a),
+			onUp: a => up(this, a),
+			onMove: a => move(this, a),
+			onFinish: () => finish(this.onCancel)
 		});
 
 		debug(`Tool: activated.`);
@@ -79,99 +79,97 @@ export class MapSelectionTool
 			debug(`Tool: already deactivated.`);
 		}
 	}
+}
 
 
-	/**
-	 * Callback for when the tool is finished.
-	 */
-	private finish()
+/**
+ * Callback for when the tool is finished.
+ */
+function finish(callback?: () => void)
+{
+	toggleGridOverlay(false);
+	if (callback)
 	{
-		toggleGridOverlay(false);
+		callback();
+	}
+}
 
-		if (this.onCancel)
-		{
-			this.onCancel();
-		}
+
+/**
+ * Starts selecting when the user starts pressing down.
+ */
+function down(tool: MapSelectionTool, args: ToolEventArgs)
+{
+	const location = args.mapCoords;
+	if (!location)
+	{
+		debug(`Tool: down at unknown location.`);
+		return;
 	}
 
+	debug(`Tool: down at ${JSON.stringify(location)}.`);
 
-	/**
-	 * Starts selecting when the user starts pressing down.
-	 */
-	private down(args: ToolEventArgs)
+	tool._isDragging = true;
+
+	tool._selection = { start: location };
+}
+
+
+
+/**
+ * Finishes selecting when the user releases the mouse button.
+ */
+function up(tool: MapSelectionTool, args: ToolEventArgs)
+{
+	const location = args.mapCoords;
+	if (!location)
 	{
-		const location = args.mapCoords;
-		if (!location)
-		{
-			debug(`Tool: down at unknown location.`);
-			return;
-		}
-
-		debug(`Tool: down at ${JSON.stringify(location)}.`);
-
-		this.isDragging = true;
-
-		this.selection = new MapSelection();
-		this.selection.start = location;
+		debug(`Tool: up at unknown location.`);
+		return;
 	}
 
+	debug(`Tool: up at ${JSON.stringify(location)}.`);
 
-
-	/**
-	 * Finishes selecting when the user releases the mouse button.
-	 */
-	private up(args: ToolEventArgs)
+	if (tool._selection && tool.onSelect)
 	{
-		const location = args.mapCoords;
-		if (!location)
-		{
-			debug(`Tool: up at unknown location.`);
-			return;
-		}
+		tool.onSelect(tool._selection);
+	}
+	tool._selection = null;
 
-		debug(`Tool: up at ${JSON.stringify(location)}.`);
+	// @ts-expect-error
+	ui.tileSelection.range = null;
+}
 
-		if (this.selection && this.onSelect)
-		{
-			this.onSelect(this.selection);
-		}
-		this.selection = null;
 
-		// @ts-expect-error
-		ui.tileSelection.range = null;
+/**
+ * Updates the grid every time the selection is moved.
+ */
+function move(tool: MapSelectionTool, args: ToolEventArgs)
+{
+	if (!tool._isDragging || !tool._selection)
+	{
+		return;
 	}
 
-
-	/**
-	 * Updates the grid every time the selection is moved.
-	 */
-	private move(args: ToolEventArgs)
+	const location = args.mapCoords;
+	if (!location)
 	{
-		if (!this.isDragging || !this.selection)
-		{
-			return;
-		}
+		return;
+	}
 
-		const location = args.mapCoords;
-		if (!location)
-		{
-			return;
-		}
+	tool._selection.end = location;
+	const range = toMapRange(tool._selection);
 
-		this.selection.end = location;
-		const range = this.selection.toMapRange();
-
-		if (range)
-		{
-			ui.tileSelection.range = range;
-		}
+	if (range)
+	{
+		ui.tileSelection.range = range;
 	}
 }
 
 
 
 // The flag for gridlines on the map.
-const ViewportFlagGridlines = (1 << 7);
+const viewportFlagGridlines = (1 << 7);
 
 
 /**
@@ -182,10 +180,10 @@ function toggleGridOverlay(value: boolean)
 {
 	if (value)
 	{
-		ui.mainViewport.visibilityFlags |= ViewportFlagGridlines;
+		ui.mainViewport.visibilityFlags |= viewportFlagGridlines;
 	}
 	else
 	{
-		ui.mainViewport.visibilityFlags &= ~(ViewportFlagGridlines);
+		ui.mainViewport.visibilityFlags &= ~(viewportFlagGridlines);
 	}
 }

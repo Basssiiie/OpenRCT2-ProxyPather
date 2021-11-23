@@ -4,32 +4,31 @@ import { error } from "./logger";
 /**
  * Class to specify an area on the map.
  */
-export class MapSelection
+export interface MapSelection
 {
-	start?: CoordsXY;
+	start: CoordsXY;
 	end?: CoordsXY;
+}
 
-
-	/**
-	 * Converts the selection to a OpenRCT2 compatible MapRange object.
-	 */
-	toMapRange(): MapRange | null
+/**
+ * Converts the selection to a OpenRCT2 compatible MapRange object.
+ */
+export function toMapRange(selection: MapSelection): MapRange | null
+{
+	if (!selection.start || !selection.end)
 	{
-		if (!this.start || !this.end)
-		{
-			error("Selection is incomplete.");
-			return null;
-		}
+		error("Selection is incomplete.");
+		return null;
+	}
 
-		return {
-			leftTop: {
-				x: Math.min(this.start.x, this.end.x),
-				y: Math.min(this.start.y, this.end.y)
-			},
-			rightBottom: {
-				x: Math.max(this.start.x, this.end.x),
-				y: Math.max(this.start.y, this.end.y)
-			}
+	return {
+		leftTop: {
+			x: Math.min(selection.start.x, selection.end.x),
+			y: Math.min(selection.start.y, selection.end.y)
+		},
+		rightBottom: {
+			x: Math.max(selection.start.x, selection.end.x),
+			y: Math.max(selection.start.y, selection.end.y)
 		}
 	}
 }

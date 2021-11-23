@@ -1,4 +1,4 @@
-import { MapSelection } from "../helpers/mapSelection";
+import { MapSelection, toMapRange } from "../helpers/mapSelection";
 import { proxifyPaths, removeProxiedPaths } from "../helpers/proxyPather";
 import { SelectedPaths } from "../helpers/selectedPaths";
 import { error, debug } from "../helpers/logger";
@@ -25,8 +25,8 @@ let smoothEdgesOption: boolean = false;
  */
 export class ProxyPatherWindow
 {
-	private _tool = new MapSelectionTool("proxy-pather", "path_down");
-	private _toolMode: ToolMode = "off";
+	_tool = new MapSelectionTool("proxy-pather", "path_down");
+	_toolMode: ToolMode = "off";
 
 
 	/**
@@ -34,8 +34,8 @@ export class ProxyPatherWindow
 	 */
 	constructor()
 	{
-		this._tool.onSelect = s => this.onUseTool(s);
-		this._tool.onCancel = () => this.setTool("off");
+		this._tool.onSelect = s => onUseTool(s, this._toolMode);
+		this._tool.onCancel = () => setTool(this, "off");
 	}
 
 
@@ -63,7 +63,7 @@ export class ProxyPatherWindow
 				title: windowTitle,
 				width: 260,
 				height: 90,
-				onClose: () => this.deactivate(),
+				onClose: () => deactivate(this._tool),
 				widgets: [
 					<ButtonWidget>{
 						name: buttonAddId,
@@ -73,7 +73,7 @@ export class ProxyPatherWindow
 						width: 100,
 						height: 30,
 						text: "Proxify",
-						onClick: () => this.toggle("add")
+						onClick: () => toggle(this, "add")
 					},
 					<ButtonWidget>{
 						name: buttonRemoveId,
@@ -83,7 +83,7 @@ export class ProxyPatherWindow
 						width: 100,
 						height: 30,
 						text: "Remove",
-						onClick: () => this.toggle("remove")
+						onClick: () => toggle(this, "remove")
 					},
 					<CheckboxWidget>{
 						name: checkboxSmoothId,
@@ -108,7 +108,7 @@ export class ProxyPatherWindow
 			});
 		}
 
-		this.setTool("add");
+		setTool(this, "add");
 	}
 
 
@@ -117,108 +117,108 @@ export class ProxyPatherWindow
 	 */
 	close()
 	{
-		this.deactivate();
+		deactivate(this._tool);
 		ui.closeWindows(windowId);
 	}
+}
 
 
-	/**
-	 * Toggles the specified tool mode on or off based on the internal state.
-	 */
-	private toggle(mode: ToolMode)
+/**
+ * Toggles the specified tool mode on or off based on the internal state.
+ */
+function toggle(window: ProxyPatherWindow, mode: ToolMode): void
+{
+	setTool(window, (window._toolMode != mode) ? mode : "off");
+}
+
+
+/**
+ * Turns the tool on or off.
+ *
+ * @param value True to enable to tool, false to disable it.
+ */
+function setTool(window: ProxyPatherWindow, mode: ToolMode): void
+{
+	window._toolMode = mode;
+
+	const instance = ui.getWindow(windowId);
+	if (!instance)
 	{
-		this.setTool((this._toolMode != mode) ? mode : "off");
+		return;
 	}
 
+	const buttonAdd = instance.findWidget<ButtonWidget>(buttonAddId);
+	const buttonRemove = instance.findWidget<ButtonWidget>(buttonRemoveId);
+	buttonAdd.isPressed = (mode === "add");
+	buttonRemove.isPressed = (mode === "remove");
 
-	/**
-	 * Turns the tool on or off.
-	 *
-	 * @param value True to enable to tool, false to disable it.
-	 */
-	private setTool(mode: ToolMode)
+	debug(`Set tool mode to: '${mode}'`);
+
+	if (mode === "off")
 	{
-		this._toolMode = mode;
+		window._tool.deactivate();
+	}
+	else
+	{
+		window._tool.activate();
+	}
+}
 
-		const window = ui.getWindow(windowId);
-		if (!window)
+
+/**
+ * Callback for when the tool gets used.
+ *
+ * @param selection The map area selected by the tool.
+ */
+function onUseTool(selection: MapSelection, toolMode: ToolMode): void
+{
+	const range = toMapRange(selection);
+	if (range)
+	{
+		switch (toolMode)
 		{
-			return;
-		}
+			case "add":
+				const smoothEdges = getSmoothEdgesSetting();
+				const selectionPadding = (smoothEdges) ? 1 : 0;
+				const pathsToProxy = new SelectedPaths(range, selectionPadding);
 
-		const buttonAdd = window.findWidget<ButtonWidget>(buttonAddId);
-		const buttonRemove = window.findWidget<ButtonWidget>(buttonRemoveId);
-		buttonAdd.isPressed = (mode === "add");
-		buttonRemove.isPressed = (mode === "remove");
+				proxifyPaths(pathsToProxy, smoothEdges);
+				break;
 
-		debug(`Set tool mode to: '${mode}'`);
+			case "remove":
+				const pathsToDeproxy = new SelectedPaths(range);
 
-		if (mode === "off")
-		{
-			this._tool.deactivate();
-		}
-		else
-		{
-			this._tool.activate();
+				removeProxiedPaths(pathsToDeproxy);
+				break;
 		}
 	}
+}
 
 
-	/**
-	 * Callback for when the tool gets used.
-	 *
-	 * @param selection The map area selected by the tool.
-	 */
-	private onUseTool(selection: MapSelection)
+/**
+ * Deactivates the tool if it was still active.
+ */
+function deactivate(tool: MapSelectionTool): void
+{
+	smoothEdgesOption = getSmoothEdgesSetting();
+
+	tool.deactivate();
+}
+
+
+/**
+ * Gets the currently selected setting for smooth path edges.
+ */
+function getSmoothEdgesSetting(): boolean
+{
+	const window = ui.getWindow(windowId);
+	const checkbox = window?.findWidget<CheckboxWidget>(checkboxSmoothId);
+
+	if (!window || !checkboxSmoothId)
 	{
-		const range = selection.toMapRange();
-		if (range)
-		{
-			switch (this._toolMode)
-			{
-				case "add":
-					const smoothEdges = this.getSmoothEdgesSetting();
-					const selectionPadding = (smoothEdges) ? 1 : 0;
-					const pathsToProxy = new SelectedPaths(range, selectionPadding);
-
-					proxifyPaths(pathsToProxy, smoothEdges);
-					break;
-
-				case "remove":
-					const pathsToDeproxy = new SelectedPaths(range);
-
-					removeProxiedPaths(pathsToDeproxy);
-					break;
-			}
-		}
+		error("Could not find smooth edges checkbox!");
+		return false;
 	}
 
-
-	/**
-	 * Deactivates the tool if it was still active.
-	 */
-	private deactivate()
-	{
-		smoothEdgesOption = this.getSmoothEdgesSetting();
-
-		this._tool.deactivate();
-	}
-
-
-	/**
-	 * Gets the currently selected setting for smooth path edges.
-	 */
-	private getSmoothEdgesSetting(): boolean
-	{
-		const window = ui.getWindow(windowId);
-		const checkbox = window?.findWidget<CheckboxWidget>(checkboxSmoothId);
-
-		if (!window || !checkboxSmoothId)
-		{
-			error("Could not find smooth edges checkbox!");
-			return false;
-		}
-
-		return (checkbox.isChecked === true);
-	}
+	return (checkbox.isChecked === true);
 }

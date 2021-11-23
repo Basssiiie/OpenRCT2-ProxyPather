@@ -190,7 +190,8 @@ function hasPathAtHeight(tile:TilePaths, height: number, slope?: Slope): boolean
 /**
  * All possible edges of paths in the game.
  */
-const enum Edge {
+const enum Edge
+{
 	NorthEast = (1 << 0),
 	SouthEast = (1 << 1),
 	SouthWest = (1 << 2),

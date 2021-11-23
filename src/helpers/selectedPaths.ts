@@ -95,7 +95,7 @@ export class SelectedPaths
 			for (let y = top; y <= bottom; y++)
 			{
 				const tile = map.getTile(x, y);
-				const paths = this.getPathsOnTile(tile);
+				const paths = getPathsOnTile(tile);
 
 				row.push({ data: tile, paths: paths });
 			}
@@ -122,62 +122,62 @@ export class SelectedPaths
 			}
 		}
 	}
+}
 
 
-	/**
-	 * Find all path elements on this tile and group them together if they are simply
-	 * layers at the same height.
-	 *
-	 * @param tile The tile for which to get all path elements.
-	 */
-	private getPathsOnTile(tile: Tile): Path[]
+/**
+ * Find all path elements on this tile and group them together if they are simply
+ * layers at the same height.
+ *
+ * @param tile The tile for which to get all path elements.
+ */
+function getPathsOnTile(tile: Tile): Path[]
+{
+	const elements = tile.elements;
+	const count = elements.length;
+	const paths: Path[] = [];
+
+	for (let i = 0; i < count; i++)
 	{
-		const elements = tile.elements;
-		const count = elements.length;
-		const paths: Path[] = [];
+		const element = elements[i];
 
-		for (let i = 0; i < count; i++)
+		if (element.type != "footpath")
+			continue;
+
+		const height = element.baseHeight;
+		const start = i;
+		let pathLayers = 1;
+
+		// Count how many layers this path has..
+		for (; ++i < count;)
 		{
-			const element = elements[i];
+			const layer = elements[i];
 
-			if (element.type != "footpath")
-				continue;
+			if (layer.type != "footpath")
+				break;
 
-			const height = element.baseHeight;
-			const start = i;
-			let pathLayers = 1;
-
-			// Count how many layers this path has..
-			for (; ++i < count;)
+			// If new path on a different height, re-check it later in the outer loop.
+			if (layer.baseHeight != height)
 			{
-				const layer = elements[i];
-
-				if (layer.type != "footpath")
-					break;
-
-				// If new path on a different height, re-check it later in the outer loop.
-				if (layer.baseHeight != height)
-				{
-					i--;
-					break;
-				}
-				pathLayers++;
+				i--;
+				break;
 			}
-
-			// Create a layered path object.
-			const realPath = element as FootpathElement;
-
-			paths.push({
-				startIndex: start,
-				layerCount: pathLayers,
-
-				baseHeight: height,
-				clearanceHeight: realPath.clearanceHeight,
-				slopeDirection: realPath.slopeDirection ?? Slope.Flat,
-				isHidden: realPath.isHidden,
-				object: realPath.object,
-			});
+			pathLayers++;
 		}
-		return paths;
+
+		// Create a layered path object.
+		const realPath = element as FootpathElement;
+
+		paths.push({
+			startIndex: start,
+			layerCount: pathLayers,
+
+			baseHeight: height,
+			clearanceHeight: realPath.clearanceHeight,
+			slopeDirection: realPath.slopeDirection ?? Slope.Flat,
+			isHidden: realPath.isHidden,
+			object: realPath.object,
+		});
 	}
+	return paths;
 }
