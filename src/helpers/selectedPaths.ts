@@ -1,4 +1,7 @@
-import { log, mapTileSize } from "./utilityHelpers";
+/**
+ * The size of a single map tile in coordinates.
+ */
+const mapTileSize = 32;
 
 
 /**
@@ -84,8 +87,6 @@ export class SelectedPaths
 		const right = (range.rightBottom.x / mapTileSize) + padding;
 		const top = (range.leftTop.y / mapTileSize) - padding;
 		const bottom = (range.rightBottom.y / mapTileSize) + padding;
-
-		log(`Selection = ${JSON.stringify(range)}`);
 
 		for (let x = left; x <= right; x++)
 		{

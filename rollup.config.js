@@ -1,6 +1,8 @@
+import replace from "@rollup/plugin-replace";
 import typescript from "@rollup/plugin-typescript";
-import { terser } from "rollup-plugin-terser";
 import getPath from "platform-folders";
+import { terser } from "rollup-plugin-terser";
+import pkg from "./package.json";
 
 
 // Environment variables
@@ -22,6 +24,14 @@ const config = {
 		format: "iife",
 	},
 	plugins: [
+		replace({
+			include: "./src/helpers/environment.ts",
+			preventAssignment: true,
+			values: {
+				__PLUGIN_VERSION__: pkg.version,
+				__BUILD_CONFIGURATION__: build
+			}
+		}),
 		typescript(),
 		terser({
 			compress: {

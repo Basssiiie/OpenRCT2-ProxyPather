@@ -1,5 +1,5 @@
 import { SelectedPaths, Path, Slope, TilePaths } from "./selectedPaths";
-import { log } from "./utilityHelpers";
+import { debug } from "./logger";
 
 
 /**
@@ -56,7 +56,7 @@ export function proxifyPaths(selection: SelectedPaths, smoothEdges: boolean)
 		}
 	});
 
-	log(`Proxy pathing applied to ${count} path elements.`);
+	debug(`Proxy pathing applied to ${count} path elements.`);
 }
 
 
@@ -95,7 +95,7 @@ export function removeProxiedPaths(selection: SelectedPaths)
 		}
 	});
 
-	log(`Proxy pathing removed from ${count} path elements.`);
+	debug(`Proxy pathing removed from ${count} path elements.`);
 }
 
 

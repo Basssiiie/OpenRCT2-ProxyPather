@@ -1,4 +1,5 @@
-import { isUiAvailable, log } from "./helpers/utilityHelpers";
+import { isUiAvailable } from "./helpers/environment";
+import { debug } from "./helpers/logger";
 import { ProxyPatherWindow } from "./ui/window";
 
 
@@ -10,7 +11,7 @@ const window = new ProxyPatherWindow();
  */
 export function main()
 {
-	log("Plugin started.");
+	debug("Plugin started.");
 
 	if (!isUiAvailable)
 	{

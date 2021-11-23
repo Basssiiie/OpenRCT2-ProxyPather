@@ -1,9 +1,9 @@
 import { MapSelection } from "../helpers/mapSelection";
 import { proxifyPaths, removeProxiedPaths } from "../helpers/proxyPather";
 import { SelectedPaths } from "../helpers/selectedPaths";
-import { error, isDebugMode, log } from "../helpers/utilityHelpers";
+import { error, debug } from "../helpers/logger";
 import { MapSelectionTool } from "../tools/mapSelectionTool";
-import { pluginVersion } from "../version";
+import { isDevelopment, pluginVersion } from "../helpers/environment";
 
 
 // Settings for the window
@@ -47,13 +47,13 @@ export class ProxyPatherWindow
 		const window = ui.getWindow(windowId);
 		if (window)
 		{
-			log("The proxy pather window is already shown.");
+			debug("The proxy pather window is already shown.");
 			window.bringToFront();
 		}
 		else
 		{
 			let windowTitle = `Proxy Pather (v${pluginVersion})`;
-			if (isDebugMode)
+			if (isDevelopment)
 			{
 				windowTitle += " [DEBUG]";
 			}
@@ -151,7 +151,7 @@ export class ProxyPatherWindow
 		buttonAdd.isPressed = (mode === "add");
 		buttonRemove.isPressed = (mode === "remove");
 
-		log(`Set tool mode to: '${mode}'`);
+		debug(`Set tool mode to: '${mode}'`);
 
 		if (mode === "off")
 		{

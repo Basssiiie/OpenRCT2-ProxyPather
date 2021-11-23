@@ -1,4 +1,4 @@
-import { error } from "./utilityHelpers";
+import { error } from "./logger";
 
 
 /**
@@ -17,7 +17,7 @@ export class MapSelection
 	{
 		if (!this.start || !this.end)
 		{
-			error("Selection is incomplete.", "MapSelection.toMapRange");
+			error("Selection is incomplete.");
 			return null;
 		}
 

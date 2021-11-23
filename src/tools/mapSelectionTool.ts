@@ -1,4 +1,4 @@
-import { log, toggleGridOverlay } from "../helpers/utilityHelpers";
+import { debug } from "../helpers/logger";
 import { MapSelection } from "../helpers/mapSelection";
 
 
@@ -43,7 +43,7 @@ export class MapSelectionTool
 
 		if (tool && tool.id === this.name)
 		{
-			log(`Tool: already active.`);
+			debug(`Tool: already active.`);
 			return;
 		}
 
@@ -59,7 +59,7 @@ export class MapSelectionTool
 			onFinish: () => this.finish()
 		});
 
-		log(`Tool: activated.`);
+		debug(`Tool: activated.`);
 	}
 
 
@@ -72,11 +72,11 @@ export class MapSelectionTool
 		if (tool && tool.id === this.name)
 		{
 			tool.cancel();
-			log(`Tool: deactivated.`);
+			debug(`Tool: deactivated.`);
 		}
 		else
 		{
-			log(`Tool: already deactivated.`);
+			debug(`Tool: already deactivated.`);
 		}
 	}
 
@@ -103,11 +103,11 @@ export class MapSelectionTool
 		const location = args.mapCoords;
 		if (!location)
 		{
-			log(`Tool: down at unknown location.`);
+			debug(`Tool: down at unknown location.`);
 			return;
 		}
 
-		log(`Tool: down at ${JSON.stringify(location)}.`);
+		debug(`Tool: down at ${JSON.stringify(location)}.`);
 
 		this.isDragging = true;
 
@@ -125,11 +125,11 @@ export class MapSelectionTool
 		const location = args.mapCoords;
 		if (!location)
 		{
-			log(`Tool: up at unknown location.`);
+			debug(`Tool: up at unknown location.`);
 			return;
 		}
 
-		log(`Tool: up at ${JSON.stringify(location)}.`);
+		debug(`Tool: up at ${JSON.stringify(location)}.`);
 
 		if (this.selection && this.onSelect)
 		{
@@ -165,5 +165,27 @@ export class MapSelectionTool
 		{
 			ui.tileSelection.range = range;
 		}
+	}
+}
+
+
+
+// The flag for gridlines on the map.
+const ViewportFlagGridlines = (1 << 7);
+
+
+/**
+ * Toogles the map grid overlay on or off.
+ * @param value True for on, false for off.
+ */
+function toggleGridOverlay(value: boolean)
+{
+	if (value)
+	{
+		ui.mainViewport.visibilityFlags |= ViewportFlagGridlines;
+	}
+	else
+	{
+		ui.mainViewport.visibilityFlags &= ~(ViewportFlagGridlines);
 	}
 }
