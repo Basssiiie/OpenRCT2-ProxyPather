@@ -16,7 +16,7 @@ Thanks to Darkoro and Manticore from the DKMP server for explaining proxy pathin
 ## Installation
 
 2. Download the latest version of the plugin from the [Releases page](https://github.com/Basssiiie/OpenRCT2-ProxyPather/releases).
-3. To install it, put the downloaded `*.js` file into your `/OpenRCT2/plugin` folder. 
+3. To install it, put the downloaded `*.js` file into your `/OpenRCT2/plugin` folder.
     - Easiest way to find the OpenRCT2-folder is by launching the OpenRCT2 game, click and hold on the red toolbox in the main menu, and select "Open custom content folder".
     - Otherwise this folder is commonly found in `C:/Users/<YOUR NAME>/Documents/OpenRCT2/plugin` on Windows.
     - If you already had this plugin installed before, you can safely overwrite the old file.
@@ -34,15 +34,17 @@ This project is based on [wisnia74's Typescript modding template](https://github
 4. Find `openrct2.d.ts` TypeScript API declaration file in OpenRCT2 files and copy it to `lib` folder (this file can usually be found in `C:/Users/<YOUR NAME>/Documents/OpenRCT2/bin/` or `C:/Program Files/OpenRCT2/`).
     - Alternatively, you can make a symbolic link instead of copying the file, which will keep the file up to date whenever you install new versions of OpenRCT2.
 5. Run `npm run build` (release build) or `npm run build:dev` (develop build) to build the project.
-    - The default output folder is `(project directory)/dist` and can be changed in `rollup.config.prod.js` and `rollup.config.dev.js` respectively.
+    - Default output folder for release builds: `(project directory)/dist`
+    - Default output folder for develop builds: `(documents)/OpenRCT2/plugins`
+    - If your plugin folder is located elsewhere (on for example a non-Windows OS), you can modify it in `rollup.config.js`.
 
 ### Hot reload
 
 This project supports the [OpenRCT2 hot reload feature](https://github.com/OpenRCT2/OpenRCT2/blob/master/distribution/scripting.md#writing-scripts) for development.
 
 1. Make sure you've enabled it by setting `enable_hot_reloading = true` in your `/OpenRCT2/config.ini`.
-2. Open `rollup.config.dev.js` and change the output file path to your plugin folder. 
-    - Example: `C:/Users/<YOUR NAME>/Documents/OpenRCT2/plugin/ProxyPather.js`.
+2. If you are on a non-Windows OS, open `rollup.config.js` and change the output file path to your plugin folder.
+    - Example: `C:/OpenRCT2/plugin/ProxyPather.js`.
     - Make sure this path uses `/` instead of `\` slashes!
 3. Open command prompt and use `cd` to change your current directory to the root folder of this project.
 4. Run `npm start` to start the hot reload server.
