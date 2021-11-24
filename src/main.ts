@@ -13,7 +13,7 @@ export function main()
 {
 	debug("Plugin started.");
 
-	if (!isUiAvailable)
+	if (!isUiAvailable || network.mode != "none")
 	{
 		return;
 	}

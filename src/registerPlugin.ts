@@ -10,5 +10,6 @@ registerPlugin({
 	authors: ["Basssiiie"],
 	type: "local",
 	licence: "MIT",
+	targetApiVersion: 37,
 	main,
 });

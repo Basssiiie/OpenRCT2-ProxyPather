@@ -1,5 +1,6 @@
-import { SelectedPaths, Path, Slope, TilePaths } from "./selectedPaths";
 import { debug } from "./logger";
+import { copyPathData, PathLayers, Slope, TilePaths } from "./paths";
+import { SelectedPaths } from "./selectedPaths";
 
 
 /**
@@ -104,14 +105,12 @@ export function removeProxiedPaths(selection: SelectedPaths)
  * @param tile The tile to add the proxy path to.
  * @param path The path to proxify.
  */
-function addProxyPath(tile: Tile, path: Path): Readonly<FootpathElement>
+function addProxyPath(tile: Tile, path: PathLayers): Readonly<FootpathElement>
 {
 	const proxyPath = tile.insertElement(path.startIndex + 1) as FootpathElement;
 
 	proxyPath.type = "footpath";
-	proxyPath.baseHeight = path.baseHeight;
-	proxyPath.clearanceHeight = path.clearanceHeight;
-	proxyPath.object = path.object;
+	copyPathData(path, proxyPath);
 	return proxyPath;
 }
 
@@ -120,7 +119,7 @@ function addProxyPath(tile: Tile, path: Path): Readonly<FootpathElement>
  * Returns true if this path is already proxied, or false if not.
  * @param path The path to check.
  */
-function isProxied(path: Path): boolean
+function isProxied(path: PathLayers): boolean
 {
 	return (path.layerCount > 1);
 }
@@ -167,7 +166,7 @@ function getPathSides(x: number, y: number, z: number, tiles: TilePaths[][]): nu
  * @param height The height at which the path needs to be.
  * @param slope The allowed direction of the slope, if it is sloped.
  */
-function hasPathAtHeight(tile:TilePaths, height: number, slope?: Slope): boolean
+function hasPathAtHeight(tile: TilePaths, height: number, slope?: Slope): boolean
 {
 	for (let i = 0; i < tile.paths.length; i++)
 	{

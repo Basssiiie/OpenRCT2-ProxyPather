@@ -1,47 +1,9 @@
+import { copyPathData, PathLayers, Slope, TilePaths } from "./paths";
+
 /**
  * The size of a single map tile in coordinates.
  */
 const mapTileSize = 32;
-
-
-/**
- * Specifies all paths on the specified tile.
- */
-export interface TilePaths
-{
-	data: Readonly<Tile>;
-	paths: Path[];
-}
-
-
-/**
- * Definition of a specific (potentially layered) path.
- */
-export interface Path
-{
-	startIndex: number;
-	layerCount: number;
-
-	object: number;
-	slopeDirection: Slope;
-	baseHeight: number;
-	clearanceHeight: number;
-	isHidden: boolean;
-}
-
-
-/**
- * Possible slope directions a path can have.
- */
-export const enum Slope
-{
-	Flat = -1,
-	NorthEast = 0,
-	SouthEast = 1,
-	SouthWest = 2,
-	NorthWest = 3,
-	Count = 4 // amount of different slopes
-}
 
 
 /**
@@ -131,17 +93,18 @@ export class SelectedPaths
  *
  * @param tile The tile for which to get all path elements.
  */
-function getPathsOnTile(tile: Tile): Path[]
+function getPathsOnTile(tile: Tile): PathLayers[]
 {
 	const elements = tile.elements;
 	const count = elements.length;
-	const paths: Path[] = [];
+	const paths: PathLayers[] = [];
 
 	for (let i = 0; i < count; i++)
 	{
 		const element = elements[i];
 
-		if (element.type != "footpath")
+		// Skip queue's for now as well..
+		if (element.type != "footpath" || element.isQueue)
 			continue;
 
 		const height = element.baseHeight;
@@ -149,7 +112,7 @@ function getPathsOnTile(tile: Tile): Path[]
 		let pathLayers = 1;
 
 		// Count how many layers this path has..
-		for (; ++i < count;)
+		while (++i < count)
 		{
 			const layer = elements[i];
 
@@ -166,18 +129,15 @@ function getPathsOnTile(tile: Tile): Path[]
 		}
 
 		// Create a layered path object.
-		const realPath = element as FootpathElement;
-
-		paths.push({
+		const layers = {
 			startIndex: start,
 			layerCount: pathLayers,
+			slopeDirection: element.slopeDirection ?? Slope.Flat,
+			isBaseHidden: element.isHidden
+		} as PathLayers;
 
-			baseHeight: height,
-			clearanceHeight: realPath.clearanceHeight,
-			slopeDirection: realPath.slopeDirection ?? Slope.Flat,
-			isHidden: realPath.isHidden,
-			object: realPath.object,
-		});
+		copyPathData(element, layers);
+		paths.push(layers);
 	}
 	return paths;
 }
