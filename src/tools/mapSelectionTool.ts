@@ -37,7 +37,7 @@ export class MapSelectionTool
 	/**
 	 * Sets this as the currently activated tool.
 	 */
-	activate()
+	activate(): void
 	{
 		const tool = ui.tool;
 
@@ -52,7 +52,6 @@ export class MapSelectionTool
 		ui.activateTool({
 			id: this.name,
 			cursor: this.cursor,
-			onStart: () => { },
 			onDown: a => down(this, a),
 			onUp: a => up(this, a),
 			onMove: a => move(this, a),
@@ -66,7 +65,7 @@ export class MapSelectionTool
 	/**
 	 * Disables the tool if it is still active.
 	 */
-	deactivate()
+	deactivate(): void
 	{
 		const tool = ui.tool;
 		if (tool && tool.id === this.name)
@@ -85,7 +84,7 @@ export class MapSelectionTool
 /**
  * Callback for when the tool is finished.
  */
-function finish(callback?: () => void)
+function finish(callback?: () => void): void
 {
 	toggleGridOverlay(false);
 	if (callback)
@@ -98,7 +97,7 @@ function finish(callback?: () => void)
 /**
  * Starts selecting when the user starts pressing down.
  */
-function down(tool: MapSelectionTool, args: ToolEventArgs)
+function down(tool: MapSelectionTool, args: ToolEventArgs): void
 {
 	const location = args.mapCoords;
 	if (!location)
@@ -119,7 +118,7 @@ function down(tool: MapSelectionTool, args: ToolEventArgs)
 /**
  * Finishes selecting when the user releases the mouse button.
  */
-function up(tool: MapSelectionTool, args: ToolEventArgs)
+function up(tool: MapSelectionTool, args: ToolEventArgs): void
 {
 	const location = args.mapCoords;
 	if (!location)
@@ -135,8 +134,6 @@ function up(tool: MapSelectionTool, args: ToolEventArgs)
 		tool.onSelect(tool._selection);
 	}
 	tool._selection = null;
-
-	// @ts-expect-error
 	ui.tileSelection.range = null;
 }
 
@@ -144,7 +141,7 @@ function up(tool: MapSelectionTool, args: ToolEventArgs)
 /**
  * Updates the grid every time the selection is moved.
  */
-function move(tool: MapSelectionTool, args: ToolEventArgs)
+function move(tool: MapSelectionTool, args: ToolEventArgs): void
 {
 	if (!tool._isDragging || !tool._selection)
 	{
@@ -176,7 +173,7 @@ const viewportFlagGridlines = (1 << 7);
  * Toogles the map grid overlay on or off.
  * @param value True for on, false for off.
  */
-function toggleGridOverlay(value: boolean)
+function toggleGridOverlay(value: boolean): void
 {
 	if (value)
 	{

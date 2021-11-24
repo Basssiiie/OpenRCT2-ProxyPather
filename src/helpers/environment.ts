@@ -13,14 +13,14 @@ export const buildConfiguration = "__BUILD_CONFIGURATION__";
 /**
  * Returns true if the current build is a production build.
  */
-// @ts-expect-error
+// @ts-expect-error: boolean expression is affected by build variable replacement.
 export const isProduction = (buildConfiguration === "production");
 
 
 /**
  * Returns true if the current build is a production build.
  */
-// @ts-expect-error
+// @ts-expect-error: boolean expression is affected by build variable replacement.
 export const isDevelopment = (buildConfiguration === "development");
 
 

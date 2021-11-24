@@ -9,7 +9,7 @@ import { SelectedPaths } from "./selectedPaths";
  * @param selection A map of selected paths in an area.
  * @param smoothEdges Whether to make the path edges smooth depending on neighbouring tiles.
  */
-export function proxifyPaths(selection: SelectedPaths, smoothEdges: boolean)
+export function proxifyPaths(selection: SelectedPaths, smoothEdges: boolean): void
 {
 	let count = 0;
 	selection.forEach((x, y, tiles) =>
@@ -65,7 +65,7 @@ export function proxifyPaths(selection: SelectedPaths, smoothEdges: boolean)
  * Removes all extra proxy layers that are present within the current selected area.
  * @param selection A map of selected paths in an area.
  */
-export function removeProxiedPaths(selection: SelectedPaths)
+export function removeProxiedPaths(selection: SelectedPaths): void
 {
 	let count = 0;
 	selection.forEach((x, y, tiles) =>

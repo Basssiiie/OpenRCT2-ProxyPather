@@ -30,5 +30,5 @@ export function toMapRange(selection: MapSelection): MapRange | null
 			x: Math.max(selection.start.x, selection.end.x),
 			y: Math.max(selection.start.y, selection.end.y)
 		}
-	}
+	};
 }

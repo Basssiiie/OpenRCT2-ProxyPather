@@ -9,7 +9,7 @@ const window = new ProxyPatherWindow();
 /**
  * Entry point of the plugin.
  */
-export function main()
+export function main(): void
 {
 	debug("Plugin started.");
 
@@ -19,4 +19,4 @@ export function main()
 	}
 
 	ui.registerMenuItem("Proxy Pather", () => window.open());
-};
+}

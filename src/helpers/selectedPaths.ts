@@ -20,7 +20,7 @@ export class SelectedPaths
 	/**
 	 * Gets the amount of tiles selected on the X axis.
 	 */
-	get width()
+	get width(): number
 	{
 		return this.tiles.length;
 	}
@@ -29,7 +29,7 @@ export class SelectedPaths
 	/**
 	 * Gets the amount of tiles selected on the Y axis.
 	 */
-	get height()
+	get height(): number
 	{
 		return (this.tiles.length > 0) ? this.tiles[0].length : 0;
 	}
@@ -71,7 +71,7 @@ export class SelectedPaths
 	 *
 	 * @param callback The action to perform on each tile.
 	 */
-	forEach(callback:(x: number, y: number, tiles: TilePaths[][]) => void)
+	forEach(callback:(x: number, y: number, tiles: TilePaths[][]) => void): void
 	{
 		const width = (this.width - this.padding);
 		const height = (this.height - this.padding);

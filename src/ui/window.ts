@@ -34,15 +34,15 @@ export class ProxyPatherWindow
 	 */
 	constructor()
 	{
-		this._tool.onSelect = s => onUseTool(s, this._toolMode);
-		this._tool.onCancel = () => setTool(this, "off");
+		this._tool.onSelect = (selection): void => onUseTool(selection, this._toolMode);
+		this._tool.onCancel = (): void => setTool(this, "off");
 	}
 
 
 	/**
 	 * Opens the window for the proxy pather tool.
 	 */
-	open()
+	open(): void
 	{
 		const window = ui.getWindow(windowId);
 		if (window)
@@ -115,7 +115,7 @@ export class ProxyPatherWindow
 	/**
 	 * Closes the window for the proxy pather tool.
 	 */
-	close()
+	close(): void
 	{
 		deactivate(this._tool);
 		ui.closeWindows(windowId);
@@ -178,18 +178,21 @@ function onUseTool(selection: MapSelection, toolMode: ToolMode): void
 		switch (toolMode)
 		{
 			case "add":
+			{
 				const smoothEdges = getSmoothEdgesSetting();
 				const selectionPadding = (smoothEdges) ? 1 : 0;
 				const pathsToProxy = new SelectedPaths(range, selectionPadding);
 
 				proxifyPaths(pathsToProxy, smoothEdges);
 				break;
-
+			}
 			case "remove":
+			{
 				const pathsToDeproxy = new SelectedPaths(range);
 
 				removeProxiedPaths(pathsToDeproxy);
 				break;
+			}
 		}
 	}
 }
