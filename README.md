@@ -2,13 +2,17 @@
 
 This plugin lets you quickly cover guide paths with full paths without changing the guests pathfinding. This method is called 'proxy pathing'.
 
-![(Video example of applying proxy pathing)](img/proxy-pather.gif)
+![(Video example of applying proxy pathing)](https://raw.githubusercontent.com/Basssiiie/OpenRCT2-ProxyPather/master/img/proxy-pather.gif)
 
 In short; to make it look like your guests are using the full width of the path, you can create so called 'guide paths'. These paths will guide the guests along your preferred routes without having the game turn it into wide paths (which are mostly ignored by guests).
 
 If you then hide this guide path and cover it with another path object via the Tile Inspector, guests will be none the wiser and they will still follow the original path under it. They always use the lowest path in the tile element list.
 
 Since making these double layered proxy paths can be quite tedious, this plugin does it for you by converting all the paths in the specified area to said proxy paths with a simple drag of the mouse.
+
+The newest version also supports smoothing the edges and preserving any placed footpath additions (like benches and lamps). And guests can still use them!
+
+![(Video example of the newest version of the plugin)](https://raw.githubusercontent.com/Basssiiie/OpenRCT2-ProxyPather/master/img/proxy-preserve-additions.gif)
 
 Thanks to Darkoro and Manticore from the DKMP server for explaining proxy pathing.
 
