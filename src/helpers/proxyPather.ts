@@ -20,9 +20,10 @@ export function proxifyPaths(selection: SelectedPaths, smoothEdges: boolean): vo
 		for (let i = tile.paths.length - 1; i >= 0; i--)
 		{
 			const pathInfo = tile.paths[i];
+			const alreadyProxied = isProxied(pathInfo);
 			let proxyPath: FootpathElement;
 
-			if (!isProxied(pathInfo))
+			if (!alreadyProxied)
 			{
 				// Skip paths with slopes; we do not proxy them.
 				if (pathInfo.slopeDirection !== Slope.Flat)
@@ -50,9 +51,20 @@ export function proxifyPaths(selection: SelectedPaths, smoothEdges: boolean): vo
 				proxyPath.corners = 0xFF;
 			}
 
+			// If it has an addition, do the triple layer technique to preserve the addition.
+			if (pathInfo.hasAddition && !alreadyProxied)
+			{
+				const extraLayer = addProxyPath(tile.data, pathInfo);
+				extraLayer.edges = proxyPath.edges;
+				extraLayer.corners = proxyPath.corners;
+			}
+
 			// Hide the original path.
 			const originalPath = tile.data.getElement<FootpathElement>(pathInfo.startIndex);
-			originalPath.isHidden = true;
+			if (!pathInfo.hasAddition)
+			{
+				originalPath.isHidden = true;
+			}
 			count++;
 		}
 	});
@@ -105,7 +117,7 @@ export function removeProxiedPaths(selection: SelectedPaths): void
  * @param tile The tile to add the proxy path to.
  * @param path The path to proxify.
  */
-function addProxyPath(tile: Tile, path: PathLayers): Readonly<FootpathElement>
+function addProxyPath(tile: Tile, path: PathLayers): FootpathElement
 {
 	const proxyPath = tile.insertElement(path.startIndex + 1) as FootpathElement;
 

@@ -33,6 +33,7 @@ export interface PathLayers extends PathObject
 
 	slopeDirection: Slope;
 	isBaseHidden: boolean;
+	hasAddition: boolean;
 }
 
 

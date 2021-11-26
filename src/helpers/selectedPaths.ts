@@ -133,7 +133,8 @@ function getPathsOnTile(tile: Tile): PathLayers[]
 			startIndex: start,
 			layerCount: pathLayers,
 			slopeDirection: element.slopeDirection ?? Slope.Flat,
-			isBaseHidden: element.isHidden
+			isBaseHidden: element.isHidden,
+			hasAddition: (element.addition !== null),
 		} as PathLayers;
 
 		copyPathData(element, layers);
